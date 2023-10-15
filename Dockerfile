@@ -1,7 +1,3 @@
-#===============================================================================
-# ROS2 Development Environment
-#===============================================================================
-
 FROM osrf/ros:foxy-desktop
 
 # System packages 
@@ -49,6 +45,7 @@ RUN apt-get update && apt-get -y --quiet --no-install-recommends install \
   openjdk-8-jre \
   openssh-client \
   picocom \
+  screen \
   pkg-config \
   python3-dev \
   python3-pip \
@@ -67,34 +64,43 @@ RUN apt-get update && apt-get -y --quiet --no-install-recommends install \
   && apt-get -y autoremove \
   && apt-get clean autoclean \
   && rm -rf /var/lib/apt/lists/*
-
-# conda
-RUN curl -LO http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
-RUN bash Miniconda3-latest-Linux-x86_64.sh -p /miniconda -b
-RUN rm Miniconda3-latest-Linux-x86_64.sh
-ENV PATH=/miniconda/bin:${PATH}
-RUN conda init
+# install some pip packages needed for testing
+RUN python3 -m pip install -U \
+  argcomplete \
+  flake8-blind-except \
+  flake8-builtins \
+  flake8-class-newline \
+  flake8-comprehensions \
+  flake8-deprecated \
+  flake8-docstrings \
+  flake8-import-order \
+  flake8-quotes \
+  pytest-repeat \
+  pytest-rerunfailures \
+  pytest
+# install Fast-RTPS dependencies
+RUN apt install --no-install-recommends -y \
+  libasio-dev \
+  libtinyxml2-dev
+# install Cyclone DDS dependencies
+RUN apt install --no-install-recommends -y \
+  libcunit1-dev
 
 # install required python packages
 COPY requirements.txt /tmp/requirements.txt
-RUN pip install -r /tmp/requirements.txt
+RUN pip3 install -r /tmp/requirements.txt
 RUN rosdep update
+COPY install_px4.bash /tmp/install_px4.bash
+RUN bash /tmp/install_px4.bash
 
 # setup environment
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 RUN echo "source /opt/ros/foxy/setup.bash" >> /root/.bashrc
 
+
 # default workspace
 RUN mkdir -p /home/ubuntu/robot_ws/src
-WORKDIR /home/ubuntu
+WORKDIR /home/ubuntu/robot_ws
 
-#===============================================================================
-# PX4 Development Environment
-#===============================================================================
-# Install PX4 toolchain
-COPY install_px4_env.bash /tmp/install_px4_env.bash
-RUN bash /tmp/install_px4_env.bash
-
-# PX4 and MavLink Downloader
-COPY download_px4_mavlink.bash /home/ubuntu/download_px4_mavlink.bash
+COPY download_px4_autopilot.bash /home/ubuntu/download_px4_autopilot.bash
