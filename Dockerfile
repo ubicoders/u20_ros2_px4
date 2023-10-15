@@ -1,5 +1,5 @@
 FROM osrf/ros:foxy-desktop
-
+#FROM microros/micro-ros-agent:foxy
 # System packages 
 RUN apt-get update && apt-get -y --quiet --no-install-recommends install \
   apt-utils \
@@ -99,8 +99,38 @@ ENV LC_ALL C.UTF-8
 RUN echo "source /opt/ros/foxy/setup.bash" >> /root/.bashrc
 
 
+# # install java_home
+RUN apt-get update && apt-get install -y \
+  openjdk-11-jdk \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN echo "JAVA_HOME=\"/usr/lib/jvm/java-11-openjdk-amd64\"" >> /etc/environment
+
+# FAST RTPS Gen
+RUN pip3 install -U empy pyros-genmsg setuptools
+RUN git clone --recursive https://github.com/eProsima/Fast-DDS-Gen.git -b v1.0.4 /tmp/Fast-DDS-Gen
+COPY install_fastrtpsgen.bash /tmp/install_fastrtpsgen.bash
+RUN bash /tmp/install_fastrtpsgen.bash
+
 # default workspace
 RUN mkdir -p /home/ubuntu/robot_ws/src
 WORKDIR /home/ubuntu/robot_ws
+# CMD ["/bin/bash"]
 
+# install ros2-px4 bridge
+
+COPY download_px4ros_rtps.bash /home/ubuntu/download_px4ros_rtps.bash
 COPY download_px4_autopilot.bash /home/ubuntu/download_px4_autopilot.bash
+
+#PX4_Autopilot - 30150f723a69068d12de9295b5d7e1e4fdbf4677
+
+
+# documentation(https://docs.px4.io/main/en/ros/ros2_comm.html) for setting up PX4 RTPS-ROS2 (Nov.10.22),
+
+# use these commits for the following repos:
+
+# PX4_Auto~ : 30150f723a69068d12de9295b5d7e1e4fdbf4677
+
+# PX4_msg: https://github.com/PX4/px4_msgs/tree/daee1217b8834cb5293f7913bd7f0850c882ffb7
+
+# PX4_ros_com: https://github.com/PX4/px4_ros_com/tree/7e25c34df0aab25d6e723385322c62712ea97207
