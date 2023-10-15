@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  ubi_ros2_px4:
+  ubi_ros2_px4_v1.13:
     container_name: ros2_px4
     build: .
     image: ubicoders/ros2-px4:px4_v1.13
