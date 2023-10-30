@@ -104,3 +104,5 @@ RUN mkdir -p /home/ubuntu/robot_ws/src
 WORKDIR /home/ubuntu/robot_ws
 
 COPY download_px4_autopilot.bash /home/ubuntu/download_px4_autopilot.bash
+COPY download_bridge_px4_ros.bash /home/ubuntu/
+COPY install_uxrce.bash /home/ubuntu/install_uxrce.bash
