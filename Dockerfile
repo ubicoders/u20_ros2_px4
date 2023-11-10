@@ -106,3 +106,18 @@ WORKDIR /home/ubuntu/robot_ws
 COPY download_px4_autopilot.bash /home/ubuntu/download_px4_autopilot.bash
 COPY download_bridge_px4_ros.bash /home/ubuntu/
 COPY install_uxrce.bash /home/ubuntu/install_uxrce.bash
+
+
+# Install miniconda to /miniconda
+RUN curl -LO http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+RUN bash Miniconda3-latest-Linux-x86_64.sh -p /miniconda -b
+RUN rm Miniconda3-latest-Linux-x86_64.sh
+ENV PATH=/miniconda/bin:${PATH}
+RUN conda update -y conda
+RUN conda install -c anaconda -y python=3.11.0
+RUN conda install -c anaconda  conda-build
+RUN conda init bash
+COPY ./requirements.txt /home/ubuntu/requirements.txt
+RUN pip install -r /home/ubuntu/requirements.txt
+RUN pip3 install -r /home/ubuntu/requirements.txt
+RUN rm -r /home/ubuntu/requirements.txt
