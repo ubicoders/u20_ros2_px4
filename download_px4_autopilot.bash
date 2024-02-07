@@ -9,4 +9,5 @@ git submodule update --init --recursive
 
 cd /home/ubuntu
 git clone https://github.com/mavlink/mavlink.git --recursive
-PYTHONPATH=/home/user/mavlink
+PYTHONPATH=/home/ubuntu/mavlink
+
