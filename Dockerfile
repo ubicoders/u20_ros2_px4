@@ -113,6 +113,7 @@ RUN pip install -r /home/ubuntu/requirements.txt
 RUN pip3 install -r /home/ubuntu/requirements.txt
 RUN rm -r /home/ubuntu/requirements.txt
 
+RUN apt-get install python3-tk -y
 
 # # Install miniconda to /miniconda
 # RUN curl -LO http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
