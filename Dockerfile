@@ -118,6 +118,8 @@ RUN rm -r /home/ubuntu/requirements.txt
 RUN pip uninstall em
 RUN pip install empy==3.3.4
 
+RUN apt-get install python3-tk -y
+
 # # Install miniconda to /miniconda
 # RUN curl -LO http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 # RUN bash Miniconda3-latest-Linux-x86_64.sh -p /miniconda -b
