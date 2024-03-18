@@ -78,42 +78,39 @@ RUN python3 -m pip install -U \
   pytest-repeat \
   pytest-rerunfailures \
   pytest
+
 # install Fast-RTPS dependencies
 RUN apt install --no-install-recommends -y \
   libasio-dev \
   libtinyxml2-dev
+
 # install Cyclone DDS dependencies
 RUN apt install --no-install-recommends -y \
   libcunit1-dev
 
 # install required python packages
-COPY requirements.txt /tmp/requirements.txt
-RUN pip3 install -r /tmp/requirements.txt
-RUN rosdep update
-COPY install_px4.bash /tmp/install_px4.bash
-RUN bash /tmp/install_px4.bash
-
-# setup environment
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
-RUN echo "source /opt/ros/foxy/setup.bash" >> /root/.bashrc
-RUN echo "alias python=python3" >> /root/.bashrc
-
-
-# default workspace
-RUN mkdir -p /home/ubuntu/robot_ws/src
-WORKDIR /home/ubuntu/robot_ws
-
-COPY download_px4_autopilot.bash /home/ubuntu/download_px4_autopilot.bash
-COPY download_bridge_px4_ros.bash /home/ubuntu/
-COPY install_uxrce.bash /home/ubuntu/install_uxrce.bash
-
 COPY ./requirements.txt /home/ubuntu/requirements.txt
 RUN pip install -r /home/ubuntu/requirements.txt
 RUN pip3 install -r /home/ubuntu/requirements.txt
 RUN rm -r /home/ubuntu/requirements.txt
 
+# setup ROS environment
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+RUN echo "source /opt/ros/foxy/setup.bash" >> /root/.bashrc
+RUN echo "alias python=python3" >> /root/.bashrc
+
 RUN apt-get install python3-tk -y
+
+# default workspace
+RUN mkdir -p /home/ubuntu/robot_ws/src
+WORKDIR /home/ubuntu/robot_ws
+
+# COPY download_px4_autopilot.bash /home/ubuntu/download_px4_autopilot.bash
+COPY download_bridge_px4_ros.bash /home/ubuntu/
+COPY install_uxrce.bash /home/ubuntu/install_uxrce.bash
+
+
 
 # # Install miniconda to /miniconda
 # RUN curl -LO http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh

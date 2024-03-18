@@ -41,3 +41,4 @@ pytest-repeat
 pytest-rerunfailures 
 pytest
 lark
+ubicoders-vrobots==0.2.3
